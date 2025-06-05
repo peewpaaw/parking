@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from osm_client import OSMClient
+from building import Building
 from typing import List, Tuple
 
 app = FastAPI(title="Parking API")
@@ -29,3 +30,17 @@ async def get_way_coordinates(way_id: int):
     if not coordinates:
         raise HTTPException(status_code=404, detail="Way not found or has no coordinates")
     return coordinates 
+
+@app.get("/way/{way_id}/accident_area", response_model=List[Tuple[float, float]])
+async def get_accidents_area(way_id: int, extension_meters: float = 1000):
+    coordinates = osm_client.get_way_nodes_coordinates(way_id)
+    if not coordinates:
+        raise HTTPException(status_code=404, detail="Way not found or has no coordinates")
+    
+    # Создаем объект Building с полученными координатами
+    building = Building(coordinates)
+    
+    # Получаем точки области возможного происшествия
+    accident_area = building.get_accident_area(extension_meters)
+    
+    return accident_area 
