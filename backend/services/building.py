@@ -33,7 +33,7 @@ class Building:
         # Получаем азимут между точками
         initial_bearing = self._calculate_initial_compass_bearing(point1, point2)
         #final_bearing = initial_bearing + 180 % 360
-        final_bearing = final_bearing + 180
+        final_bearing = initial_bearing + 180
         
         extended_p1 = geodesic(kilometers=extension_meters/1000).destination(p1, final_bearing)
         extended_p2 = geodesic(kilometers=extension_meters/1000).destination(p2, initial_bearing)
